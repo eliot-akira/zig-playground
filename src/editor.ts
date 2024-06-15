@@ -82,7 +82,7 @@ let client = new ZlsClient(new Worker(
 let editor = (async () => {
     await client.initialize();
 
-    console.log(getPasteHash());
+    // console.log(getPasteHash());
 
     let editor = new EditorView({
         extensions: [],
@@ -92,9 +92,8 @@ let editor = (async () => {
     (await getPaste()) ?? `const std = @import("std");
 
 pub fn main() !void {
-    std.debug.print("All your {s} are belong to us.\\n", .{"codebase"});
-
-    try std.io.getStdOut().writer().writeAll("bruh");
+    std.debug.print("Hello {s}.\\n", .{"world"});
+    try std.io.getStdOut().writer().writeAll("ok");
 }
 `,
             extensions: [basicSetup, oneDark, indentUnit.of("    "), client.createPlugin("file:///main.zig", "zig", true), keymap.of([indentWithTab]),],
@@ -174,38 +173,40 @@ outputs_run.addEventListener("click", async () => {
     changeTab("zig-stderr");
 });
 
-const outputs_share = document.getElementById("outputs__share")! as HTMLButtonElement;
+// const outputs_share = document.getElementById("outputs__share")! as HTMLButtonElement;
 
-outputs_share.addEventListener("click", async () => {
-    const response = await fetch(`${endpoint}/put`, {
-        method: "put",
-        headers: {
-            "Content-Type": "application/octet-stream"
-        },
-        body: (await editor).state.doc.toString(),
-    });
+// outputs_share.addEventListener("click", async () => {
+//     const response = await fetch(`${endpoint}/put`, {
+//         method: "put",
+//         headers: {
+//             "Content-Type": "application/octet-stream"
+//         },
+//         body: (await editor).state.doc.toString(),
+//     });
 
-    const hash = (await response.text()).slice(0, 6);
-    history.pushState(null, "", `/${hash}`);
+//     const hash = (await response.text()).slice(0, 6);
+//     history.pushState(null, "", `/${hash}`);
 
-    (document.getElementById("popup__input")! as HTMLInputElement).value = `https://playground.zigtools.org/${hash}`;
-    document.getElementById("popup")?.classList.add("shown");
-});
+//     (document.getElementById("popup__input")! as HTMLInputElement).value = `https://playground.zigtools.org/${hash}`;
+//     document.getElementById("popup")?.classList.add("shown");
+// });
 
 const endpoint = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://pastes.zigtools.org";
 
 async function getPaste(): Promise<string | null> {
-    const hash = getPasteHash();
-    if (!hash) return null;
-    const f = await fetch(`${endpoint}/get${hash.length === 64 ? "Exact" : ""}/${hash}`);
-    if (f.status !== 200) return null;
-    return await f.text();
+  return null
+  // const hash = getPasteHash();
+  // if (!hash) return null;
+  // const f = await fetch(`${endpoint}/get${hash.length === 64 ? "Exact" : ""}/${hash}`);
+  // if (f.status !== 200) return null;
+  // return await f.text();
 }
 
 function getPasteHash(): string | null {
-    const maybeHash = location.pathname.replace("/", "");
-    if (maybeHash.length === 6 || maybeHash.length === 64) return maybeHash;
-    return null;
+return null
+    // const maybeHash = location.pathname.replace("/", "");
+    // if (maybeHash.length === 6 || maybeHash.length === 64) return maybeHash;
+    // return null;
 }
 
 document.getElementById("popup__copy")?.addEventListener("click", () => {

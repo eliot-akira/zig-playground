@@ -32,10 +32,10 @@ jobs:
 
       - run: npm ci
       
-      - run: ./node_modules/.bin/parcel build 404.html
+      - run: ./node_modules/.bin/parcel build --dist-dir docs index.html
       
       - uses: actions/upload-pages-artifact@v1.0.7
         with:
-          path: "dist/"
+          path: "docs/"
 
       - uses: actions/deploy-pages@v1.2.3

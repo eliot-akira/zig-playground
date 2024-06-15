@@ -13,32 +13,30 @@
   <body>
     <nav>
       <h1>Zig Playground</h1>
+      <div>
+        <button id="outputs__run" class="primary">Run</button>
+      </div>
     </nav>
 
     <main>
       <div id="split-pane">
         <div id="editor"></div>
         <div id="outputs">
-          <div id="outputs__toolbar">
-            <div>
-              <button id="outputs__run" class="primary">Run</button>
-            </div>
-
+          <div id="outputs__toolbar" style="display:none">
             <div>
               <select id="outputs__tab">
                 <option value="zls-stderr">ZLS Debug</option>
-                <option value="zig-stderr" selected>Zig Debug</option>
-                <option value="zig-output">Zig Output</option>
+                <option value="zig-stderr">Zig Debug</option>
+                <option value="zig-output" selected>Zig Output</option>
               </select>
             </div>
           </div>
 
           <div id="outputs__tabs">
             <div id="zls-stderr"></div>
+            <div id="zig-stderr"></div>
 
-            <div id="zig-stderr" class="shown"></div>
-
-            <pre id="zig-output"></pre>
+            <pre id="zig-output" class="shown"></pre>
           </div>
         </div>
       </div>

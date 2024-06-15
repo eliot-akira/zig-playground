@@ -27,7 +27,7 @@ nav {
     align-items: center;
     justify-content: space-between;
 
-    padding: 1rem;
+    padding: .5rem;
 
     background-color: hsl(0, 0%, 20%);
 }
@@ -48,7 +48,7 @@ main {
 
 h1 {
     font-size: 1.5em;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 a {
@@ -86,6 +86,7 @@ i {
 
 #outputs__tabs, code {
     font-family: monospace;
+    font-size: 14px;
 }
 
 .cm-editor {
@@ -108,7 +109,7 @@ button {
     padding: 0.5rem 2.25rem;
 
     font-size: 1em;
-    font-weight: 700;
+    font-weight: 500;
     text-align: center;
     letter-spacing: -0.011em;
 
@@ -174,29 +175,33 @@ input {
     padding: 1rem;
 
     &__toolbar {
-        display: flex;
-        justify-content: space-between;
+      // display: flex;
+      // justify-content: space-between;
     }
 
     &__tabs {
-        border: 1px solid theme.$foreground;
-        border-radius: 3px;
 
-        padding: 1rem;
+      // border: 1px solid theme.$foreground;
+      //   border-radius: 3px;
 
-        flex-grow: 1;
-
+        // padding: 1rem;
+        width: 100%;
+        // flex-grow: 1;
         line-height: 1.75;
+        // overflow-y: auto;
 
-        overflow-y: auto;
+        #zig-stderr, #zls-stderr, #zig-output {
+          width: 100%;
+          white-space: wrap;
+  word-break: break-all;
 
-        &>* {
             display: none;
-    
             &.shown {
-                display: block;
+              display: block;
             }
-        }
+
+
+          }
     }
 }
 

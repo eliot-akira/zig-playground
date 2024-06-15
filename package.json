@@ -17,6 +17,7 @@
     "@immutabl3/tar": "^0.0.2",
     "@lezer/highlight": "^1.1.4",
     "codemirror": "^6.0.1",
+    "codemirror-lang-zig": "^0.1.0",
     "pako": "^2.1.0",
     "vscode-languageserver-protocol": "^3.17.3"
   },

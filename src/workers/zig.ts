@@ -95,30 +95,29 @@ async function run(source: string) {
 
     wasi.fds[3].dir.contents["main.zig"].data = new TextEncoder().encode(source);
 
+    
     postMessage({
-        stderr: "Creating WebAssembly instance...",
+      stderr: args.join(' ') //+"\nCompile to WASM..",
     });
 
     let inst = await WebAssembly.instantiate(wasm, {
         "wasi_snapshot_preview1": wasi.wasiImport,
     });  
-    
-    postMessage({
-        stderr: "Compiling...",
-    });
 
     try {
         wasi.start(inst);
     } catch (err) {
         if (`${err}`.trim() === "exit with exit code 0") {
-            postMessage({
-                compiled: wasi.fds[3].dir.contents["main.wasm"].data
+      
+          postMessage({
+              compiled: wasi.fds[3].dir.contents["main.wasm"].data
             });
-        }
-        postMessage({
+        } else {
+          postMessage({
             stderr: `${err}`,
-        });
-    }
+          });
+        }
+  }
 
     currentlyRunning = false;
 }

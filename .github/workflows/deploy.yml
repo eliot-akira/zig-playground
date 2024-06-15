@@ -32,7 +32,7 @@ jobs:
 
       - run: npm install
       
-      - run: ./node_modules/.bin/parcel build --dist-dir docs index.html
+      - run: ./node_modules/.bin/parcel build --public-url /zig-playground --dist-dir docs index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

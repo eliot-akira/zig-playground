@@ -6,3 +6,5 @@ node_modules
 #zls.wasm
 #zig_debug.wasm
 .env
+/package-lock.json
+/bun.lockb

@@ -1,7 +1,6 @@
 {
   "name": "zig-playground",
   "scripts": {
-    "_bundle": "node_modules\\.bin\\rollup src/editor.ts -f iife -o editor.bundle.js -p @rollup\\plugin-node-resolve",
     "build": "rm -rf docs && parcel build --no-autoinstall --dist-dir docs index.html",
     "serve": "parcel serve --no-autoinstall --dist-dir docs index.html"
   },

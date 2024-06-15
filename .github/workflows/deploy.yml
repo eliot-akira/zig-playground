@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: 18
 
-      - run: npm ci
+      - run: npm install
       
       - run: ./node_modules/.bin/parcel build --dist-dir docs index.html
       

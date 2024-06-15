@@ -2,8 +2,8 @@
   "name": "zig-playground",
   "scripts": {
     "_bundle": "node_modules\\.bin\\rollup src/editor.ts -f iife -o editor.bundle.js -p @rollup\\plugin-node-resolve",
-    "build": "rm -rf docs && parcel build --dist-dir docs index.html",
-    "serve": "parcel serve --dist-dir docs index.html"
+    "build": "rm -rf docs && parcel build --no-autoinstall --dist-dir docs index.html",
+    "serve": "parcel serve --no-autoinstall --dist-dir docs index.html"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.4.2",
@@ -25,7 +25,8 @@
     "@parcel/transformer-sass": "^2.8.3",
     "@types/node": "^18.15.11",
     "@types/pako": "^2.0.0",
-    "parcel": "^2.8.3"
+    "parcel": "^2.8.3",
+    "process": "^0.11.10"
   },
   "browserslist": [
     "since 2017-06"

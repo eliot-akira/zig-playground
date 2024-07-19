@@ -13,6 +13,8 @@ Changes include:
 
 ## Prepare
 
+- [ ] Compile zig compiler for `wasm32-wasi` and place `zig_release.wasm` in `src`
+
 - [x] Compile zls for `wasm32-wasi` and place `zls.wasm` in `src`
 
   Or download `zls-wasm32-wasi.tar.xz ` from [releases](https://github.com/zigtools/zls/releases).

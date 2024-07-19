@@ -1,6 +1,7 @@
 {
   "name": "zig-playground",
   "scripts": {
+    "start": "parcel --no-autoinstall --dist-dir docs index.html",
     "build": "rm -rf docs && parcel build --no-autoinstall --dist-dir docs index.html",
     "serve": "parcel serve --no-autoinstall --dist-dir docs index.html"
   },

@@ -8,6 +8,15 @@ import { indentUnit } from '@codemirror/language'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { zig } from 'codemirror-lang-zig'
 
+function addZigOutput(line, style = '') {
+  const tmpElement = document.createElement('div')
+  tmpElement.innerText = line
+  if (style) tmpElement.style = style
+  document.getElementById('zig-output')?.append(tmpElement)  
+}
+
+const addZigOutputInfo = (line) => addZigOutput(line, `opacity: .4`)
+
 export default class ZlsClient extends LspClient {
   public worker: Worker
   public sharer: Sharer
@@ -35,10 +44,10 @@ export default class ZlsClient extends LspClient {
 
   private messageHandler = (ev: MessageEvent) => {
     if (ev.data.stderr) {
-      const line = document.createElement('div')
-      line.innerText = ev.data.stderr
 
-      document.getElementById('zls-stderr')?.append(line)
+      const tmpElement = document.createElement('div')
+      tmpElement.innerText = ev.data.stderr
+      document.getElementById('zls-stderr')?.append(tmpElement)
 
       scrollOutputToEnd()
       return
@@ -81,9 +90,18 @@ let client = new ZlsClient(
 )
 
 let editor = (async () => {
-  await client.initialize()
 
   // console.log(getPasteHash());
+  await client.initialize()
+
+  const extensions = [
+    basicSetup,
+    oneDark,
+    indentUnit.of('    '),
+    client.createPlugin('file:///main.zig', 'zig', true),
+    keymap.of([indentWithTab]),
+    zig(),
+  ]
 
   let editor = new EditorView({
     extensions: [],
@@ -91,21 +109,16 @@ let editor = (async () => {
     state: EditorState.create({
       doc:
         (await getPaste()) ??
-        `const std = @import("std");
+        `// Editor with language server
+
+const std = @import("std");
 
 pub fn main() !void {
     std.debug.print("Hello {s}.", .{"world"});
     try std.io.getStdOut().writer().writeAll(" OK");
 }
 `,
-      extensions: [
-        basicSetup,
-        oneDark,
-        indentUnit.of('    '),
-        client.createPlugin('file:///main.zig', 'zig', true),
-        keymap.of([indentWithTab]),
-        zig(),
-      ],
+      extensions,
     }),
   })
 
@@ -134,20 +147,21 @@ let zigWorker = new Worker(new URL('workers/zig.ts', import.meta.url), {
 
 zigWorker.onmessage = (ev) => {
   if (ev.data.stderr) {
-
-    const line = document.createElement('div')
-    line.innerText = ev.data.stderr
-    document.getElementById('zig-output')?.append(line)
-    // document.getElementById("zig-stderr")?.append(line);
-
+    const tmpElement = document.createElement('div')
+    tmpElement.innerText = ev.data.stderr
+    document.getElementById('zig-output')?.append(tmpElement)
+    // document.getElementById("zig-stderr")?.append(tmpElement);
     scrollOutputToEnd()
     return
 
-  } else if (ev.data.compiled) {
+  } else if (ev.data.compilerArgs) {
 
-    // const line = document.createElement('div')
-    // line.innerText = '---'
-    // document.getElementById('zig-output')?.append(line)
+    addZigOutputInfo(`\> ${ev.data.compilerArgs}`)
+
+  } else if (ev.data.compiled) {
+    // const tmpElement = document.createElement('div')
+    // tmpElement.innerText = '---'
+    // document.getElementById('zig-output')?.append(tmpElement)
 
     outputs_tab_selector.value = 'zig-output'
     // changeTab("zig-output");
@@ -164,7 +178,6 @@ zigWorker.onmessage = (ev) => {
         let output: string = rev.data.stderr
 
         if (!output.includes('exit with exit code 0')) {
-
           document.getElementById('zig-output')!.innerHTML += output
           scrollOutputToEnd()  
         }
@@ -193,9 +206,9 @@ outputs_run.addEventListener('click', async () => {
   // document.getElementById('zig-stderr')!.innerHTML = ''
   // document.getElementById('zig-output')!.innerHTML = ''
 
-  const line = document.createElement('div')
-  line.innerText = '---'
-  document.getElementById('zig-output')?.append(line)
+  // const tmpElement = document.createElement('div')
+  // tmpElement.innerText = '---'
+  // document.getElementById('zig-output')?.append(tmpElement)
 
   zigWorker.postMessage({
     run: (await editor).state.doc.toString(),
@@ -206,10 +219,12 @@ outputs_run.addEventListener('click', async () => {
 })
 
 
-// Get Zig version from compiler itself
-const line = document.createElement('div')
-line.innerText = 'Zig compiler version 0.12'
-document.getElementById('zig-output')?.append(line)
+// TODO: Get Zig version from compiler itself
+// zigWorker.postMessage({
+//   cli: `version`,
+// })
+
+addZigOutput('Zig compiler version 0.12.0-dev.67+7aeb758')
 
 // const outputs_share = document.getElementById("outputs__share")! as HTMLButtonElement;
 

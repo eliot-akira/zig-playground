@@ -63,6 +63,8 @@ const wasmData = (async () => {
     };
 })();
 
+
+
 let currentlyRunning = false;
 async function run(source: string) {
     if (currentlyRunning) return;
@@ -91,14 +93,13 @@ async function run(source: string) {
             
         }),
     ];
-    let wasi = new WASI(args, env, fds);
 
-    wasi.fds[3].dir.contents["main.zig"].data = new TextEncoder().encode(source);
-
-    
     postMessage({
-      stderr: args.join(' ') //+"\nCompile to WASM..",
+      compilerArgs: args.join(' ')
     });
+
+    let wasi = new WASI(args, env, fds);
+    wasi.fds[3].dir.contents["main.zig"].data = new TextEncoder().encode(source);
 
     let inst = await WebAssembly.instantiate(wasm, {
         "wasi_snapshot_preview1": wasi.wasiImport,
@@ -108,10 +109,9 @@ async function run(source: string) {
         wasi.start(inst);
     } catch (err) {
         if (`${err}`.trim() === "exit with exit code 0") {
-      
           postMessage({
-              compiled: wasi.fds[3].dir.contents["main.wasm"].data
-            });
+            compiled: wasi.fds[3].dir.contents["main.wasm"].data
+          });
         } else {
           postMessage({
             stderr: `${err}`,
@@ -122,8 +122,69 @@ async function run(source: string) {
     currentlyRunning = false;
 }
 
+/**
+ * CLI - TODO: Anything other than build-exe results in RuntimeError: unreachable executed
+ */
+async function cli(argsString: string) {
+  if (currentlyRunning) return;
+
+  currentlyRunning = true;
+
+  const {libStd, wasm} = await wasmData;
+  let args = ["zig.wasm",
+    ...argsString.split(' ')  
+  ];
+  let env = [];
+  let fds = [
+      stdin, // stdin
+      new Stdio(StdioKind.stdout), // stdout
+      new Stdio(StdioKind.stderr), // stderr
+      new PreopenDirectory(".", {
+          "zig.wasm": new File(wasmData),
+          // "main.zig": new File([]),
+      }),
+      new PreopenDirectory("/lib", {
+          "std": libStd,
+      }),
+      new PreopenDirectory("/cache", {
+          
+      }),
+  ];
+
+  postMessage({
+    compilerArgs: args.join(' ')
+  });
+
+  let wasi = new WASI(args, env, fds);
+  // wasi.fds[3].dir.contents["main.zig"].data = new TextEncoder().encode(source);
+
+  let inst = await WebAssembly.instantiate(wasm, {
+      "wasi_snapshot_preview1": wasi.wasiImport,
+  });  
+
+  try {
+      wasi.start(inst);
+  } catch (err) {
+      if (`${err}`.trim() === "exit with exit code 0") {
+        postMessage({
+          stdout: 'ok'
+        });
+      } else {
+        postMessage({
+          stderr: `${err}`,
+        });
+      }
+}
+
+  currentlyRunning = false;
+}
+
+
+
 onmessage = (event) => {
     if (event.data.run) {
         run(event.data.run);
+    } else if (event.data.cli != null) {
+      cli(event.data.cli)
     }
 }
